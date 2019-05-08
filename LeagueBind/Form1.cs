@@ -17,10 +17,10 @@ namespace LeagueBind
     {
         string LoLPath = @"C:\Riot Games\League of Legends\";
         string settingsPath;
-
         JObject jsonFile;
         List<string> checkedItems = new List<string>();
         string newValue = "[Ctrl][6]";
+        string emoteEvt = "evtChampMasteryDisplay";
 
         public Form1()
         {
@@ -35,7 +35,7 @@ namespace LeagueBind
             if (File.Exists(settingsPath))
             {
                 checkedItems = bindList.CheckedItems.Cast<string>().ToList();
-
+                string tempValue = newValue;
                 foreach (string value in checkedItems)
                 {
                     newValue += "," + value;
@@ -46,37 +46,38 @@ namespace LeagueBind
                 JToken settings = jsonFile["files"][1]["sections"][0]["settings"];
                 JObject settingsObject = jsonFile["files"][1]["sections"][0]["settings"] as JObject;
 
-                bool existsMastery = false;
+                bool existsEmote = false;
 
                 for (int i = 0; i < settings.Count(); i++)
                 {
-                    if (settings[i]["name"].ToString() == "evtChampMasteryDisplay" && checkedItems.Count > 0)
+                    if (settings[i]["name"].ToString() == emoteEvt && checkedItems.Count > 0)
                     {
 
 
                         settings[i]["value"] = newValue;
-                        existsMastery = true;
+                        existsEmote = true;
                     }
                 }
 
-                if (existsMastery == false)
+                if (existsEmote == false)
                 {
 
                     JArray jo = jsonFile["files"][1]["sections"][0]["settings"] as JArray;
-                    JObject mastery = JObject.Parse(@"{""name"": ""evtChampMasteryDisplay"",""value"": ""[Ctrl][6]""}");
-                    mastery["value"] = newValue;
+                    JObject emote = JObject.Parse(@"{""name"": ""evtChampMasteryDisplay"",""value"": ""[Ctrl][6]""}");
+                    emote["name"] = emoteEvt;
+                    emote["value"] = newValue;
 
-                    jo.Add(mastery);
+                    jo.Add(emote);
                 }
 
                 File.WriteAllText(settingsPath, jsonFile.ToString());
 
-                feedbackLabel.Text = "Key successfully bound";
-                newValue = "[Ctrl][6]";
+                feedbackLabel.Text = "Key successfully bound!";
+                newValue = tempValue;
             }
             else
             {
-                feedbackLabel.Text = "LoL directory not found";
+                feedbackLabel.Text = "LoL directory not found!";
             }
         }
 
@@ -103,6 +104,33 @@ namespace LeagueBind
         {
             LoLPath = directoryText.Text;
             settingsPath = LoLPath + @"\Config\PersistedSettings.json";
+        }
+
+        private void MasteryEmote_CheckedChanged(object sender, EventArgs e)
+        {
+            newValue = "[Ctrl][6]";
+            emoteEvt = "evtChampMasteryDisplay";
+        }
+
+        private void DanceEmote_CheckedChanged(object sender, EventArgs e)
+        {
+            newValue = "[Ctrl][3]";
+            emoteEvt = "evtEmoteDance";
+        }
+        private void LaughEmote_CheckedChanged(object sender, EventArgs e)
+        {
+            newValue = "[Ctrl][4]";
+            emoteEvt = "evtEmoteLaugh";
+        }
+        private void TauntEmote_CheckedChanged(object sender, EventArgs e)
+        {
+            newValue = "[Ctrl][2]";
+            emoteEvt = "evtEmoteTaunt";
+        }
+        private void JokeEmote_CheckedChanged(object sender, EventArgs e)
+        {
+            newValue = "[Ctrl][1]";
+            emoteEvt = "evtEmoteJoke";
         }
     }
 }

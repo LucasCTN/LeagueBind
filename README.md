@@ -1,2 +1,2 @@
 # LeagueBind
-Bind your LoL ability keys to the mastery emote
+Bind your LoL ability and item keys to emotes.
